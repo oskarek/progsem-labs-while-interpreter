@@ -1,0 +1,21 @@
+# Should terminate with
+#   ispalindrome = 1  if num is a palindrome
+#   ispalindrome = 0  otherwise
+# E.g. if num = 1221, ispalindrome should be 1
+
+num := 121121;
+origInteger := num;
+revInteger := 0;
+
+# reversed integer is stored in variable 
+(while !(num = 0) do (
+    remainder := num - 10 * (num / 10);
+    revInteger := revInteger * 10 + remainder;
+    num := num / 10
+));
+
+# palindrome if origInteger and revInteger are equal
+if origInteger = revInteger then
+    ispalindrome := 1
+else
+    ispalindrome := 0

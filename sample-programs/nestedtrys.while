@@ -1,0 +1,13 @@
+# Should terminate with x = 2
+try
+	x := 0;
+	try
+		x := x + 1;
+		try
+			x := x / 0
+		catch
+			x := 2
+	catch
+		x := 3
+catch
+	x := 4

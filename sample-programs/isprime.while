@@ -1,0 +1,17 @@
+# Should terminate with
+#   isprime = 1  if num is a prime,
+#   isprime = 0  otherwise
+
+num := 104743;
+flag := 0;
+
+i := 2;
+
+(while i <= num/2 && flag = 0 do (
+	# condition for nonprime number
+	(if num - i * (num / i) = 0 then
+		flag := 1
+	else skip);
+	i := i + 1
+));
+if flag = 0 then isprime := 1 else isprime := 0

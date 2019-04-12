@@ -1,0 +1,13 @@
+# Shuld terminate with
+#   sum = sum of first n nat. numbers
+#       = 1+2+...+n
+# E.g: n = 20 --> sum = 1+2+...+20 = 210
+
+n := 20;
+sum := 0;
+
+i := 1;
+(while i <= n do (
+    sum := sum + i;
+    i := i + 1
+))
