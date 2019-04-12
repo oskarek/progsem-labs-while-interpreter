@@ -81,7 +81,7 @@ stmt' :: Parser Stm
 stmt' = foldr1 (<|>) [skip, ifThnEls, while, tryCatch, assignment, parens stmt]
 
 skip :: Parser Stm
-skip = Skip <$ symbol "skip"
+skip = Skip <$ rword "skip"
 
 ifThnEls :: Parser Stm
 ifThnEls = liftA3 IfThnEls
