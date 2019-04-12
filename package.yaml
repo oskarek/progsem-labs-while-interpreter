@@ -24,6 +24,7 @@ dependencies:
 - megaparsec
 - parser-combinators
 - containers
+- optparse-applicative
 
 library:
   source-dirs: src
