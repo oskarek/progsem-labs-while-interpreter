@@ -6,7 +6,6 @@ import           Data.Map                       ( (!?) )
 import           Code.Inst
 import           Control.Applicative            ( liftA2 )
 import           Control.Arrow                  ( (>>>) )
-import           Data.Bool                      ( bool )
 import           Data.List.NonEmpty
 import qualified Data.List.NonEmpty            as NE
 import           AM.Configuration
@@ -34,9 +33,9 @@ step (Conf conf) = case conf of
         (Ok, Just z') -> Just $ Conf (c, e, (status, M.insert x z' s))
         _ -> Just $ Conf (c, e, (Fail, s))
     (NOOP : c, e, s) -> Just $ Conf (c, e, s)
-    (BRANCH c1 c2 : c, SBool t : e, s@(status, _)) -> case status of
-        Ok -> Just $ Conf (maybe [] (bool c2 c1) t ++ c, e, s)
-        Fail -> Just $ Conf (c, e, s)
+    (BRANCH c1 c2 : c, SBool t : e, s'@(status, s)) -> case (status, t) of
+        (Ok, Just t') -> Just $ Conf ((if t' then c1 else c2) ++ c, e, s')
+        _ -> Just $ Conf (c, e, (Fail, s))
     (LOOP c1 c2 : c, e, s@(status, _)) -> case status of
         Ok -> Just $ Conf (c1 ++ [BRANCH (c2 ++ [LOOP c1 c2]) [NOOP]] ++ c, e, s)
         Fail -> Just $ Conf (c, e, s)
