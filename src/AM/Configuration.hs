@@ -20,7 +20,7 @@ instance Show Configuration where
     show (Conf (c, e, (status, s))) =
         unlines [ "Code: " ++ disp ":" (map show c)
                 , "Stack: " ++ disp ":" (map show e)
-                , "State: " ++ sSym ++ "[" ++ disp ", " (map showMapping $ toList s) ++ "]" ]
+                , "State: " ++ sSym ++ disp ", " (map showMapping $ toList s) ]
         where sSym = case status of Ok -> "✅ "; Fail -> "🚩 "
               showMapping (x, a) = x ++ " ⟼  " ++ show a
               disp sep x = if null x then "ε" else intercalate sep x
