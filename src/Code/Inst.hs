@@ -19,6 +19,6 @@ data Inst = PUSH Integer
           | NOOP
           | BRANCH Code Code
           | LOOP Code Code
-          | SBRANCH Code Code
-          | SETOKSTATE
+          | TRYCATCH Code Code
+          | CATCH Code
           deriving (Eq, Show)

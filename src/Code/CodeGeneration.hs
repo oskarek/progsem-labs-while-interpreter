@@ -26,7 +26,7 @@ cs :: Stm -> Code
 cs s = case s of
     Assign x a       -> ca a ++ [STORE x]
     Skip             -> [NOOP]
-    Seq ss           -> foldr1 (\s ss' -> s ++ [SBRANCH ss' [NOOP]]) (cs <$> ss)
+    Seq ss           -> foldMap cs ss
     IfThnEls b s1 s2 -> cb b ++ [BRANCH (cs s1) (cs s2)]
     While    b  s'   -> [LOOP (cb b) (cs s')]
-    TryCatch s1 s2   -> cs s1 ++ [SBRANCH [NOOP] (SETOKSTATE : cs s2)]
+    TryCatch s1 s2   -> [TRYCATCH (cs s1) (cs s2)]
