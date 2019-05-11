@@ -8,7 +8,6 @@ import           Data.Functor                   ( (<$) )
 import           Data.Void
 import           Control.Applicative            ( empty
                                                 , liftA2
-                                                , liftA3
                                                 )
 import           Control.Monad.Combinators.Expr
 import           Text.Megaparsec         hiding ( sepBy1 )
@@ -17,8 +16,9 @@ import qualified Text.Megaparsec.Char.Lexer    as L
 import           Control.Applicative.Combinators.NonEmpty
                                                 ( sepBy1 )
 import           Data.List.NonEmpty             ( NonEmpty(..) )
+import qualified Control.Monad.State           as State
 
-type Parser = Parsec Void String
+type Parser = ParsecT Void String (State.State Int)
 
 -- LEXER
 
@@ -74,29 +74,49 @@ whileParser = between sc eof stmt
 -- Statements
 
 stmt :: Parser Stm
-stmt = f <$> stmt' `sepBy1` semi
-    where f l@(x :| xs) = if null xs then x else Seq l
+stmt = do
+    cp <- State.get
+    f cp <$> stmt' `sepBy1` semi
+    where f cp l@(x :| xs) = if null xs then x else Stm cp (Seq l)
 
 stmt' :: Parser Stm
 stmt' = foldr1 (<|>) [skip, ifThnEls, while, tryCatch, assignment, parens stmt]
 
 skip :: Parser Stm
-skip = Skip <$ rword "skip"
+skip = do
+    cp <- State.get
+    sk <- Stm cp Skip <$ rword "skip"
+    State.modify (+1)
+    return sk
 
 ifThnEls :: Parser Stm
-ifThnEls = liftA3 IfThnEls
-                  (rword "if" *> bExp)
-                  (rword "then" *> stmt)
-                  (rword "else" *> stmt)
+ifThnEls = do
+    cp <- State.get
+    cond <- rword "if" >> State.modify (+1) >> bExp
+    thn <- rword "then" *> stmt
+    els <- rword "else" *> stmt
+    return (Stm cp (IfThnEls cond thn els))
 
 while :: Parser Stm
-while = liftA2 While (rword "while" *> bExp) (rword "do" *> stmt)
+while = do
+    cp <- State.get
+    wh <- rword "while" >> State.modify (+1) >> bExp
+    do' <- rword "do" *> stmt
+    return (Stm cp (While wh do'))
 
 tryCatch :: Parser Stm
-tryCatch = liftA2 TryCatch (rword "try" *> stmt) (rword "catch" *> stmt)
+tryCatch = do
+    cp <- State.get
+    t <- rword "try" >> State.modify (+1) >> stmt
+    c <- rword "catch" *> stmt
+    return (Stm cp (TryCatch t c))
 
 assignment :: Parser Stm
-assignment = liftA2 Assign (identifier <* symbol ":=") aExp
+assignment = do
+    cp <- State.get
+    var <- identifier <* symbol ":="
+    State.modify (+1)
+    Stm cp . Assign var <$> aExp
 
 -- Expressions
 

@@ -19,7 +19,9 @@ data BExp = TrueLit
           | And BExp BExp
           deriving (Eq, Show)
 
-data Stm = Assign String AExp
+type ControlPoint' = Int
+data Stm = Stm ControlPoint' Stm' deriving (Eq, Show)
+data Stm' = Assign String AExp
          | Skip
          | Seq (NonEmpty Stm)
          | IfThnEls BExp Stm Stm

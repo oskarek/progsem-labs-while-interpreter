@@ -19,12 +19,59 @@ extra-source-files:
 # common to point users to the README.md file.
 description:         Please see the README on GitHub at <https://github.com/githubuser/while-interpreter#readme>
 
+ghc-options:
+- -Wall
+- -Wcompat
+- -Wno-partial-type-signatures
+- -Wredundant-constraints
+
+default-extensions:
+- AllowAmbiguousTypes
+- ApplicativeDo
+- BangPatterns
+- BlockArguments
+- DataKinds
+- DeriveFoldable
+- DeriveFunctor
+- DeriveGeneric
+- DeriveTraversable
+- EmptyCase
+- FlexibleContexts
+- FlexibleInstances
+- FunctionalDependencies
+- GADTs
+- GeneralizedNewtypeDeriving
+- ImplicitParams
+- KindSignatures
+- LambdaCase
+- MonadComprehensions
+- NoMonoLocalBinds
+- MultiParamTypeClasses
+- MultiWayIf
+- NumDecimals
+- PartialTypeSignatures
+- PatternGuards
+- PatternSynonyms
+- PolyKinds
+- RankNTypes
+- RecordWildCards
+- ScopedTypeVariables
+- TemplateHaskell
+- TransformListComp
+- TupleSections
+- TypeApplications
+- TypeInType
+- TypeOperators
+- ViewPatterns
+
 dependencies:
 - base >= 4.7 && < 5
 - megaparsec
 - parser-combinators
 - containers
 - optparse-applicative
+- matrix
+- mtl
 
 library:
   source-dirs: src
