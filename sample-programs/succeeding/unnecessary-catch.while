@@ -1,0 +1,8 @@
+# analysis can prove that the catch
+# statement will never be reached.
+try
+    x := 1;
+    y := 2;
+    z := x + y
+catch
+    z := 0

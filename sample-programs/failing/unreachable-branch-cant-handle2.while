@@ -1,0 +1,10 @@
+# hope: analysis should understand that
+#       branch condition is always true.
+# reality: analysis not smart enough.
+x := -10;
+x := x + 1;
+if x <= 0 then
+    y := 1
+else
+    # this is in fact unreachable code
+    y := 0

@@ -1,0 +1,5 @@
+# division by zero not caught.
+# guaranteed exceptional termination.
+x := 1;
+y := 0;
+z := x / y

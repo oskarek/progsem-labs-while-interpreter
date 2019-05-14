@@ -1,0 +1,7 @@
+# normal termination can be guaranteed,
+# because failing branch is never reached.
+x := 0;
+if x = 1 then
+    y := 1 / 0
+else
+    y := 0
