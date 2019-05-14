@@ -10,8 +10,7 @@ import           Control.Arrow                  ( (>>>) )
 import           Control.Monad                  ( (>=>) )
 import           Options.Applicative
 import           Operations.Operations          ( mIntBoolOps )
-import           AM.Configuration               ( showConfig )
-import qualified Utils.Utils                   as Utils
+import           AM.Configuration               ( showConfig, Configuration )
 import           Operations.SignExcOps          ( signExcOps )
 import qualified Control.Monad.State           as State
 import qualified Control.Monad.Reader          as R
@@ -48,11 +47,15 @@ printExec mode = case mode of
   Production -> CG.cs >>> AM.execute >=> printConfigs
  where
   debugPrint = CG.cs >>> AM.configSteps >=> mapM_
-    (\c -> printConfigs c >> R.liftIO getChar)
-  printConfigs = Utils.showList showConfig >>> putStrLn >>> R.liftIO
+    (\c -> R.liftIO (putStrLn $ replicate 40 '-') >> printConfigs c >> R.liftIO getChar)
   analysisPrint s = R.liftIO . putStrLn . flip prettyPrint s
     =<< ctrlPointLubInfo
     =<< AM.configurationGraph (CG.cs s)
+
+printConfigs :: (Foldable t, Show i, Show b) => t (Configuration i b) -> EvalWithOps i b ()
+printConfigs t
+ | null t = R.liftIO $ putStrLn "No end states"
+ | otherwise = mapM_ (R.liftIO . putStrLn . showConfig) t
 
 main :: IO ()
 main = execParser opts >>= interpretWhileProg

@@ -12,6 +12,9 @@ data Status = Ok | Fail deriving (Eq, Ord, Show)
 type State i = (Status, Map String i)
 newtype Configuration i b = Conf (Code, Stack i b, State i) deriving (Eq, Show, Ord)
 
+codeEmpty :: Configuration i b -> Bool
+codeEmpty (Conf (c, _, _)) = null c
+
 showStackVal :: (Show i, Show b) => StackVal i b -> String
 showStackVal v = case v of
     SInt z -> show z

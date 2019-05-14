@@ -31,7 +31,7 @@ instance (Show i, Show b) => Show (LubInfo i b) where
       [Just varLubsStr, show <$> moreInfo, errorStr]
     where varLubsStr = "{" ++ List.intercalate ", " (fmap f (M.toList varLubs)) ++ "}"
           f (x, a) = x ++ "=" ++ show a
-          errorStr = if potentialExc then Just "(⚠️  potential exception raiser!)" else Nothing
+          errorStr = if potentialExc then Just "(⚠️ potential exception raiser!)" else Nothing
 
 groupOnControlPoint
   :: Tree (Configuration i b)
@@ -49,8 +49,8 @@ collectLubInfo
 collectLubInfo (NE.toList -> t) = do
   Operations {..} <- getOps
   let
-    t'       = filter (not . isCatch) t
-    nonFails = May.mapMaybe nonFail t'
+    nonCatches       = filter (not . isCatch) t
+    nonFails = May.mapMaybe nonFail nonCatches
     getMoreInfo v f = v . foldr1 lub <$> NE.nonEmpty (May.mapMaybe f nonFails)
     m = foldr (M.unionWith lub) M.empty (snd . getState <$> nonFails)
     a = getMoreInfo RhsLub getRhs
@@ -58,7 +58,7 @@ collectLubInfo (NE.toList -> t) = do
     e = case a of
       Just (RhsLub z) -> possiblyAErr z
       _               -> False
-    cpState = if length nonFails < length t' then MaybeExceptional else Normal
+    cpState = if length nonFails < length nonCatches then MaybeExceptional else Normal
   return
     $ if null nonFails then Nothing else Just $ LubInfo m (a <|> b) e cpState
  where

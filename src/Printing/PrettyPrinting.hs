@@ -59,12 +59,11 @@ prettyPrint' ind' infoMap (Stm cp stm) =
             , prettyPrint' (ind'+1) infoMap s2 ]
 
 prettyPrint :: (Show i, Show b) => M.Map ControlPoint (LubInfo i b) -> Stm -> String
-prettyPrint info stm =
-    let progStr = prettyPrint' 0 info stm
-        endInfo = info M.!? EndPoint
-        endStr = case endInfo of
-            Nothing -> " (💣 guaranteed exceptional termination!)"
-            Just li@LubInfo {..} -> case cpState of
-                MaybeExceptional -> show li ++ "️️️ (⚠️  potential excepional termination!)"
-                Normal -> show li ++ " (✅  normal termination)"
-    in progStr ++ "\n" ++ endStr
+prettyPrint info stm = progStr ++ "\n" ++ endStr
+  where
+    progStr = prettyPrint' 0 info stm
+    endStr  = case info M.!? EndPoint of
+        Nothing -> "(💣 guaranteed exceptional termination!)"
+        Just epInfo -> show epInfo ++ case cpState epInfo of
+            MaybeExceptional -> "️️️ (⚠️ potential excepional termination!)"
+            Normal           -> " (✅ normal termination)"

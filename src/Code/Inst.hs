@@ -3,7 +3,9 @@ module Code.Inst where
 type Code = [Inst]
 type StmControlPoint = Int
 
-data Inst = Inst StmControlPoint Inst' deriving (Eq, Ord, Show)
+data Inst = Inst StmControlPoint Inst' deriving (Eq, Ord)
+instance Show Inst where
+    show (Inst _ i) = show i
 data Inst' = PUSH Integer
            | ADD
            | MULT

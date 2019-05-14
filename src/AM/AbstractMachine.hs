@@ -47,8 +47,7 @@ step (Conf conf) = do
         (Inst _ (FETCH x) : c, e, s'@(_, s)) ->
             [Conf (c, SInt (s ! x) : e, s')]
         (Inst _ (STORE x) : c, SInt z : e, (status, s)) -> case status of
-            Ok | isInt z -> [Conf (c, e, (status, M.insert x z s))]
-            Ok           -> mconcat
+            Ok -> mconcat
                 [ [ Conf (c, e, (Fail, s)) | possiblyAErr z ]
                 , [ Conf (c, e, (status, M.insert x z s)) | possiblyInt z ]
                 ]
@@ -94,5 +93,5 @@ configSteps :: (Ord i, Ord b) => Code -> EvalWithOps i b [NonEmpty (Configuratio
 configSteps = fmap (mapMaybe NE.nonEmpty . levels) . configurationGraph
 
 -- | Execute the code and get all possible end configurations.
-execute :: (Ord i, Ord b) => Code -> EvalWithOps i b (NonEmpty (Configuration i b))
-execute = fmap leafs . configurationGraph
+execute :: (Ord i, Ord b) => Code -> EvalWithOps i b [Configuration i b]
+execute = fmap (NE.filter codeEmpty . leafs) . configurationGraph
